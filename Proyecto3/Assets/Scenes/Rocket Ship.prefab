@@ -66,6 +66,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rcsThrust: 250
+  mainThrust: 100
+  mainEngine: {fileID: 8300000, guid: 8fe2adb9521d3f047af3176863e29413, type: 3}
+  colisionFatal: {fileID: 8300000, guid: 84e197f1e49143e488db727ed8959577, type: 3}
+  sonidoVictoria: {fileID: 8300000, guid: c1563f26b291f2244b0d7ad0fc129631, type: 3}
 --- !u!82 &219932870808738559
 AudioSource:
   m_ObjectHideFlags: 0
@@ -76,7 +80,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f3f14aabe3d2b0c4b8b441477255655f, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

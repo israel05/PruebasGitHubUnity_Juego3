@@ -8,8 +8,11 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource; //para el sonido del misisl
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip colisionFatal;
+    [SerializeField] AudioClip sonidoVictoria;
 
-     
+
     //estados posibles del jugador, lo normal es estar vivp
     enum State { Alive, Dying, Trasncending}
     State state = State.Alive;
@@ -35,28 +38,23 @@ public class Rocket : MonoBehaviour
 
         // si su estado es vivo, puede hacer todo eso, si esta muerto no
         if (state.Equals(State.Alive)) {
-            Empuje();
-            Rotacion();
+            ResponderAEmpuje();
+            ResponderARotacion();
         }
         if (state == State.Dying) {
-            audioSource.Stop(); //como ha muerto, no hay sonidito de motor
         }
     }
         
     
 
 
-    private void Empuje()
+    private void ResponderAEmpuje()
     {
 
 
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
-            if (!audioSource.isPlaying)
-            {
-                audioSource.Play();
-            }
+            AplicarEmpuje();
             //  print("espaciejo");
         }
         else
@@ -65,22 +63,27 @@ public class Rocket : MonoBehaviour
         }
     }
 
+    private void AplicarEmpuje()
+    {
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+    }
 
-    private void Rotacion()
+    private void ResponderARotacion()
     {
 
         
         float rotationThisFrame = rcsThrust * Time.deltaTime;
         rigidBody.freezeRotation = true; //para que se quede bloqueada
         if (Input.GetKey(KeyCode.A))
-        {
-            
-            transform.Rotate(Vector3.forward * rotationThisFrame);
-            print("rotacion A");
+        {            
+            transform.Rotate(Vector3.forward * rotationThisFrame);          
         }
         else if (Input.GetKey(KeyCode.D))
-        {
-            print("rotacion D");
+        {           
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
         rigidBody.freezeRotation = false; //para que se quede libre la rotracion y no siga girando como loco
@@ -94,27 +97,43 @@ public class Rocket : MonoBehaviour
                
         switch (collision.gameObject.tag)
         {
-            case "Friendly":
-                //nada
+            case "Friendly":                
                 break;
-            case "Launchpad":
-                //nada
-                break;
-            case "Finishing":
 
-                //carga la uno
-                state = State.Trasncending;
-                Invoke("LoadNextLevel", 1f); //llamala a la función después de un esperar un segundo
+            case "Launchpad":                
                 break;
+
+            case "Finishing":
+                ComienzoTransicionVictoria();
+                break;
+
             default:
-                state = State.Dying;   
-                Invoke("LoadFirstLevel", 1f);                
+                ComienzoTransicionMuerte();
                 break;
         }
     }
 
+    private void ComienzoTransicionVictoria()
+    {
+        state = State.Trasncending;
+        audioSource.Stop();
+        audioSource.PlayOneShot(sonidoVictoria); //sonido de victoria
+        Invoke("LoadNextLevel", 2f); //llamala a la función después de un esperar un segundo
+    }
+
+    private void ComienzoTransicionMuerte()
+    {
+        audioSource.Stop();
+        audioSource.PlayOneShot(colisionFatal);
+        state = State.Dying;
+        Invoke("LoadFirstLevel", 1f);
+    }
+
+   
+
     private void LoadNextLevel()
     {
+        
         SceneManager.LoadScene(1);
     }
 
