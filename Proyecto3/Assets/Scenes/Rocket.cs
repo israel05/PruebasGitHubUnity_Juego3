@@ -8,12 +8,18 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource; //para el sonido del misisl
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
+
+     
+    //estados posibles del jugador, lo normal es estar vivp
+    enum State { Alive, Dying, Trasncending}
+    State state = State.Alive;
+
+
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-  
         
     }
 
@@ -26,16 +32,18 @@ public class Rocket : MonoBehaviour
     
     private void ProcessInput()
     {
-        /*
-         Puedo empujar siempre
-         */
-        Empuje();
 
-        /*
-         Puede rotar pero solo hacia un lado u otro
-         */
-        Rotacion();
+        // si su estado es vivo, puede hacer todo eso, si esta muerto no
+        if (state.Equals(State.Alive)) {
+            Empuje();
+            Rotacion();
+        }
+        if (state == State.Dying) {
+            audioSource.Stop(); //como ha muerto, no hay sonidito de motor
+        }
     }
+        
+    
 
 
     private void Empuje()
@@ -81,6 +89,9 @@ public class Rocket : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+
+        if (state != State.Alive) { return; } //sal de la función, no detectes nada, estas meurto
+               
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -90,17 +101,25 @@ public class Rocket : MonoBehaviour
                 //nada
                 break;
             case "Finishing":
-                print("he llegado a la meta");
+
                 //carga la uno
-                SceneManager.LoadScene(1);
+                state = State.Trasncending;
+                Invoke("LoadNextLevel", 1f); //llamala a la función después de un esperar un segundo
                 break;
             default:
-                print("has muerto!");
-                SceneManager.LoadScene(0);
-                //nada
+                state = State.Dying;   
+                Invoke("LoadFirstLevel", 1f);                
                 break;
-
         }
     }
 
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    private void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+    }
 }
