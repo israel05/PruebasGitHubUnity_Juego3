@@ -6,6 +6,10 @@ public class Rocket : MonoBehaviour
 
     Rigidbody rigidBody; //para el cohete
     AudioSource audioSource; //para el sonido del misisl
+
+
+    [SerializeField]  AudioClip cancioncillaDeFondo;
+
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
@@ -78,6 +82,7 @@ public class Rocket : MonoBehaviour
         if (!audioSource.isPlaying)
         {
             audioSource.PlayOneShot(mainEngine);
+            audioSource.PlayOneShot(cancioncillaDeFondo);
         }
         mainEngineParticles.Play();
     }
