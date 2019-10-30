@@ -133,9 +133,10 @@ public class Rocket : MonoBehaviour
     private void ComienzoTransicionMuerte()
     {
         audioSource.Stop();
+        deathParticles.Play();
         audioSource.PlayOneShot(colisionFatal);
         state = State.Dying;
-        deathParticles.Play();
+        
         Invoke("LoadFirstLevel", 1f);
     }
 
