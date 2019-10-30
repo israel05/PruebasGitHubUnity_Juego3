@@ -8,9 +8,14 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource; //para el sonido del misisl
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip colisionFatal;
     [SerializeField] AudioClip sonidoVictoria;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
 
 
     //estados posibles del jugador, lo normal es estar vivp
@@ -55,11 +60,13 @@ public class Rocket : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             AplicarEmpuje();
+
             //  print("espaciejo");
         }
         else
         {
             audioSource.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
@@ -70,6 +77,7 @@ public class Rocket : MonoBehaviour
         {
             audioSource.PlayOneShot(mainEngine);
         }
+        mainEngineParticles.Play();
     }
 
     private void ResponderARotacion()
@@ -118,6 +126,7 @@ public class Rocket : MonoBehaviour
         state = State.Trasncending;
         audioSource.Stop();
         audioSource.PlayOneShot(sonidoVictoria); //sonido de victoria
+        successParticles.Play();
         Invoke("LoadNextLevel", 2f); //llamala a la función después de un esperar un segundo
     }
 
@@ -126,6 +135,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioSource.PlayOneShot(colisionFatal);
         state = State.Dying;
+        deathParticles.Play();
         Invoke("LoadFirstLevel", 1f);
     }
 
