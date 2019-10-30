@@ -9,6 +9,8 @@ public class Rocket : MonoBehaviour
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
+    [SerializeField] float levelLoadDealy = 3f;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip colisionFatal;
     [SerializeField] AudioClip sonidoVictoria;
@@ -127,7 +129,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioSource.PlayOneShot(sonidoVictoria); //sonido de victoria
         successParticles.Play();
-        Invoke("LoadNextLevel", 2f); //llamala a la función después de un esperar un segundo
+        Invoke("LoadNextLevel", levelLoadDealy); //llamala a la función después de un esperar un segundo
     }
 
     private void ComienzoTransicionMuerte()
@@ -137,7 +139,7 @@ public class Rocket : MonoBehaviour
         audioSource.PlayOneShot(colisionFatal);
         state = State.Dying;
         
-        Invoke("LoadFirstLevel", 1f);
+        Invoke("LoadFirstLevel", levelLoadDealy);
     }
 
    

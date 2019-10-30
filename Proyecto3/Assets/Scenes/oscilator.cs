@@ -26,6 +26,8 @@ public class oscilator : MonoBehaviour {
     void Update()
     {
         //correción de movementFactor para que oscile seno
+        if (period == Mathf.Epsilon) { period += 0.1f; };
+
         float cycles = Time.time / period;
         const float tau = Mathf.PI * 2; //solo el valor de tau, 6....
         float rawSinWave = Mathf.Sin(cycles * tau);
