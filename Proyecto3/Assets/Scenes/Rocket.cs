@@ -8,7 +8,7 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource; //para el sonido del misisl
 
 
-    [SerializeField]  AudioClip cancioncillaDeFondo;
+    [SerializeField] AudioClip cancioncillaDeFondo;
 
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
@@ -24,8 +24,12 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem deathParticles;
 
 
+    //activar las colisiobnes
+    bool ColisionesDesactivadas = false;
+
+
     //estados posibles del jugador, lo normal es estar vivp
-    enum State { Alive, Dying, Trasncending}
+    enum State { Alive, Dying, Trasncending }
     State state = State.Alive;
 
 
@@ -34,7 +38,7 @@ public class Rocket : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        
+
     }
 
     // Update is called once per frame
@@ -43,8 +47,25 @@ public class Rocket : MonoBehaviour
         ProcessInput();
     }
 
-    
-    private void ProcessInput()
+
+    //activa el modo depuración y permite saltar de nivel
+
+    private void entrarEnModoDepuracion()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+
+        {
+            LoadNextLevel();
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            //deshabilitar las colisiones
+            //cambia el estado entre las colisiones
+            ColisionesDesactivadas = !ColisionesDesactivadas;
+        }
+
+    }
+    void ProcessInput()
     {
 
         // si su estado es vivo, puede hacer todo eso, si esta muerto no
@@ -54,12 +75,15 @@ public class Rocket : MonoBehaviour
         }
         if (state == State.Dying) {
         }
+        //entrar en modo depuracion
+        entrarEnModoDepuracion();
+
     }
         
     
 
 
-    private void ResponderAEmpuje()
+    void ResponderAEmpuje()
     {
 
 
@@ -76,7 +100,7 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void AplicarEmpuje()
+    void AplicarEmpuje()
     {
         rigidBody.AddRelativeForce(Vector3.up * mainThrust);
         if (!audioSource.isPlaying)
@@ -87,7 +111,7 @@ public class Rocket : MonoBehaviour
         mainEngineParticles.Play();
     }
 
-    private void ResponderARotacion()
+    void ResponderARotacion()
     {
 
         
@@ -105,10 +129,10 @@ public class Rocket : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
 
-        if (state != State.Alive) { return; } //sal de la función, no detectes nada, estas meurto
+        if (state != State.Alive || ColisionesDesactivadas) { return; } //sal de la función, no detectes nada, estas meurto
                
         switch (collision.gameObject.tag)
         {
@@ -128,7 +152,7 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void ComienzoTransicionVictoria()
+    void ComienzoTransicionVictoria()
     {
         state = State.Trasncending;
         audioSource.Stop();
@@ -137,7 +161,7 @@ public class Rocket : MonoBehaviour
         Invoke("LoadNextLevel", levelLoadDealy); //llamala a la función después de un esperar un segundo
     }
 
-    private void ComienzoTransicionMuerte()
+    void ComienzoTransicionMuerte()
     {
         audioSource.Stop();
         deathParticles.Play();
@@ -149,13 +173,13 @@ public class Rocket : MonoBehaviour
 
    
 
-    private void LoadNextLevel()
+    void LoadNextLevel()
     {
         
         SceneManager.LoadScene(1);
     }
 
-    private void LoadFirstLevel()
+    void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
     }
