@@ -119,21 +119,26 @@ public class Rocket : MonoBehaviour
     }
 
     void ResponderARotacion()
-    {
-
-        
-        float rotationThisFrame = rcsThrust * Time.deltaTime;
-        rigidBody.freezeRotation = true; //para que se quede bloqueada
+    {                       
         if (Input.GetKey(KeyCode.A))
-        {            
-            transform.Rotate(Vector3.forward * rotationThisFrame);          
+        {
+            RotacionManual(rcsThrust * Time.deltaTime);
+
         }
         else if (Input.GetKey(KeyCode.D))
-        {           
-            transform.Rotate(-Vector3.forward * rotationThisFrame);
+        {
+            RotacionManual(-rcsThrust * Time.deltaTime); 
         }
-        rigidBody.freezeRotation = false; //para que se quede libre la rotracion y no siga girando como loco
+    }
 
+    /**
+     * Permite la rotación de un objeto al que se le pasa un fotograma concreto
+     **/
+    private void RotacionManual(float rotationThisFrame)
+    {
+        rigidBody.freezeRotation = true; //para que se quede bloqueada
+        transform.Rotate(Vector3.forward * rotationThisFrame);
+        rigidBody.freezeRotation = false; //para que se quede libre la rotracion y no siga girando como loco
     }
 
     void OnCollisionEnter(Collision collision)
