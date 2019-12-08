@@ -27,6 +27,9 @@ public class Rocket : MonoBehaviour
     //activar las colisiobnes
     bool ColisionesDesactivadas = false;
 
+    //Nivel en el que estamos
+    int nivelActual = 0; //empezamos en el nivel 0
+
 
     //estados posibles del jugador, lo normal es estar vivp
     enum State { Alive, Dying, Trasncending }
@@ -175,12 +178,26 @@ public class Rocket : MonoBehaviour
         Invoke("LoadFirstLevel", levelLoadDealy);
     }
 
-   
+
 
     void LoadNextLevel()
     {
+        nivelActual = nivelActual + SceneManager.GetActiveScene().buildIndex;
         
-        SceneManager.LoadScene(1);
+
+        if (nivelActual > (SceneManager.sceneCountInBuildSettings-2))
+        {
+            nivelActual = 0;
+        } else
+        {
+            nivelActual++;
+        }
+        SceneManager.LoadScene(nivelActual);
+
+
+
+
+
     }
 
     void LoadFirstLevel()
