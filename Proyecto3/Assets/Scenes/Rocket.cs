@@ -76,7 +76,11 @@ public class Rocket : MonoBehaviour
         if (state == State.Dying) {
         }
         //entrar en modo depuracion
-        entrarEnModoDepuracion();
+        if (Debug.isDebugBuild)
+        {
+            entrarEnModoDepuracion();
+        }
+        
 
     }
         
